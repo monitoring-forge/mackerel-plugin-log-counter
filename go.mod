@@ -6,7 +6,7 @@ require (
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/mackerelio/go-mackerel-plugin v0.1.6
 	github.com/mackerelio/golib v1.2.2
-	github.com/monitoring-forge/followparser v0.2.14
+	github.com/monitoring-forge/followparser v0.2.15
 	github.com/stretchr/testify v1.11.1
 )
 

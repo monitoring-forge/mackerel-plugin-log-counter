@@ -10,6 +10,8 @@ github.com/mackerelio/golib v1.2.2 h1:fQfW1o2KvPyIsAH/7+M2J0gpf2jLu+NyYpDCN79zxW
 github.com/mackerelio/golib v1.2.2/go.mod h1:itcSOfrsT5XvkzflFPebT43RrliaKDz2T6YGYt3jclw=
 github.com/monitoring-forge/followparser v0.2.14 h1:2usujwzkWyUo1pXqucA459BP+pCvoVOz9Wj9LIwOXmE=
 github.com/monitoring-forge/followparser v0.2.14/go.mod h1:G9b5uEBoHXMa4GnEYPbQatAAQoq2h/4xFaKIyjOPHiA=
+github.com/monitoring-forge/followparser v0.2.15 h1:JiCtehe8NVd8BdfuLFzM9EDoVO3Ya4g3lunhJpnZk7k=
+github.com/monitoring-forge/followparser v0.2.15/go.mod h1:L3I8hiQxz9ahjz/pPxCVfjBYHTejwKeR7XaG9TYglyY=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
