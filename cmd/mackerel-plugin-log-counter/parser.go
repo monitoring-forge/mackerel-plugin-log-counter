@@ -5,13 +5,13 @@ import (
 )
 
 type Parser struct {
-	opt         Opt
+	opt         *Opt
 	mapCounter  map[string]float64
 	uniqCounter map[string]map[string]struct{}
 	duration    float64
 }
 
-func NewParser(opt Opt) *Parser {
+func NewParser(opt *Opt) *Parser {
 	m := map[string]float64{}
 	uq := map[string]map[string]struct{}{}
 	for _, pr := range opt.patternRegs {

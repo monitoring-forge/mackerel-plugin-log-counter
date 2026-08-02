@@ -10,11 +10,11 @@ import (
 )
 
 type LogCounterPlugin struct {
-	opt Opt
+	opt *Opt
 }
 
 func (u LogCounterPlugin) GraphDefinition() map[string]mp.Graphs {
-	metrics := make([]mp.Metrics, 0)
+	metrics := make([]mp.Metrics, 0, len(u.opt.patternRegs))
 	for _, pr := range u.opt.patternRegs {
 		metrics = append(metrics, mp.Metrics{
 			Name:    pr.name,
