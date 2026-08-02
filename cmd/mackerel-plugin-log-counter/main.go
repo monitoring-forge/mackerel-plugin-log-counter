@@ -16,6 +16,13 @@ import (
 var version string
 var commit string
 
+const (
+	OK = iota
+	WARNING
+	CRITICAL
+	UNKNOWN
+)
+
 type patternReg struct {
 	reg  *regexp.Regexp
 	name string
@@ -43,8 +50,8 @@ func main() {
 }
 
 func _main() int {
-	opt := Opt{}
-	psr := flags.NewParser(&opt, flags.HelpFlag|flags.PassDoubleDash)
+	opt := &Opt{}
+	psr := flags.NewParser(opt, flags.HelpFlag|flags.PassDoubleDash)
 	_, err := psr.Parse()
 	if opt.Version {
 		if commit == "" {
@@ -58,20 +65,22 @@ func _main() int {
 			runtime.GOARCH,
 			runtime.Version(),
 			commit)
-		return 0
-	}
-	if err != nil {
+		return OK
+	} else if flags.WroteHelp(err) {
+		fmt.Fprintf(os.Stdout, "%v\n", err)
+		return OK
+	} else if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
-		return 1
+		return UNKNOWN
 	}
 
 	if len(opt.KeyNames) == 0 {
 		fmt.Fprint(os.Stderr, "Specify --pattern and --key-name\n")
-		return 1
+		return UNKNOWN
 	}
 	if len(opt.KeyNames) != len(opt.Patterns) {
 		fmt.Fprint(os.Stderr, "The number of --pattern and --key-name must be the same\n")
-		return 1
+		return UNKNOWN
 	}
 
 	patterns := make([]*patternReg, 0)
@@ -79,7 +88,7 @@ func _main() int {
 		p, err := parseKeyName(opt.Patterns[i], k)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
-			return 1
+			return UNKNOWN
 		}
 		patterns = append(patterns, p)
 	}
@@ -99,7 +108,7 @@ func _main() int {
 	}
 	plugin := mp.NewMackerelPlugin(u)
 	plugin.Run()
-	return 0
+	return OK
 }
 
 func parseKeyName(pattern, keyName string) (*patternReg, error) {

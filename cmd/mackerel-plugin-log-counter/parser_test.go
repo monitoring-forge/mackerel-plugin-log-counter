@@ -3,6 +3,9 @@ package main
 import (
 	"regexp"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestParser_Parse(t *testing.T) {
@@ -10,7 +13,7 @@ func TestParser_Parse(t *testing.T) {
 		{name: "pattern1", reg: regexp.MustCompile(`error`)},
 		{name: "pattern2", reg: regexp.MustCompile(`warning`)},
 	}
-	opt := Opt{
+	opt := &Opt{
 		patternRegs: patterns,
 	}
 
@@ -52,7 +55,7 @@ func TestParser_FilterIgnore(t *testing.T) {
 	patterns := []*patternReg{
 		{name: "pattern1", reg: regexp.MustCompile(`error`)},
 	}
-	opt := Opt{
+	opt := &Opt{
 		patternRegs: patterns,
 		filterByte:  &filter,
 		ignoreByte:  &ignore,
@@ -95,21 +98,20 @@ func TestParser_GetResult(t *testing.T) {
 	patterns := []*patternReg{
 		{name: "pattern1", reg: regexp.MustCompile(`error`)},
 	}
-	opt := Opt{
+	opt := &Opt{
 		patternRegs: patterns,
 		PerSec:      true,
 	}
 	parser := NewParser(opt)
 
-	parser.Parse([]byte("error occurred"))
+	err := parser.Parse([]byte("error occurred"))
+	require.NoError(t, err, "Parse should not return an error")
 	parser.Finish(10) // 10 seconds
 
 	result := parser.GetResult()
 	expected := map[string]float64{"pattern1": 0.1}
 
 	for key, value := range expected {
-		if result[key] != value {
-			t.Errorf("expected %v for key %v, got %v", value, key, result[key])
-		}
+		assert.Equal(t, value, result[key], "expected %v for key %v, got %v", value, key, result[key])
 	}
 }

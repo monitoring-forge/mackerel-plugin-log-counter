@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestLogCounterPlugin_FetchMetrics(t *testing.T) {
@@ -24,7 +25,7 @@ func TestLogCounterPlugin_FetchMetrics(t *testing.T) {
 		{name: "pattern2", reg: regexp.MustCompile(`warning`)},
 	}
 	{
-		opt := Opt{
+		opt := &Opt{
 			Prefix:      "TestLogCounterPlugin_FetchMetrics",
 			patternRegs: patterns,
 			LogFile:     logFileName,
@@ -36,19 +37,17 @@ func TestLogCounterPlugin_FetchMetrics(t *testing.T) {
 		assert.NoError(t, err)
 	}
 
-	for i := 0; i < 10; i++ {
-		msg := fmt.Sprintf("warning msg %08d\n", i)
-		fh.WriteString(msg)
+	for i := range 10 {
+		fmt.Fprintf(fh, "warning msg %08d\n", i)
 	}
-	for i := 0; i < 10; i++ {
-		msg := fmt.Sprintf("error msg %08d\n", i)
-		fh.WriteString(msg)
+	for i := range 10 {
+		fmt.Fprintf(fh, "error msg %08d\n", i)
 	}
 
 	time.Sleep(time.Second)
 
 	{
-		opt := Opt{
+		opt := &Opt{
 			Prefix:      "TestLogCounterPlugin_FetchMetrics",
 			patternRegs: patterns,
 			LogFile:     logFileName,
@@ -64,17 +63,15 @@ func TestLogCounterPlugin_FetchMetrics(t *testing.T) {
 		}, "match metrics")
 	}
 
-	for i := 0; i < 5; i++ {
-		msg := fmt.Sprintf("warning msg %08d\n", i)
-		fh.WriteString(msg)
+	for i := range 5 {
+		fmt.Fprintf(fh, "warning msg %08d\n", i)
 	}
-	for i := 0; i < 5; i++ {
-		msg := fmt.Sprintf("error msg %08d\n", i)
-		fh.WriteString(msg)
+	for i := range 5 {
+		fmt.Fprintf(fh, "error msg %08d\n", i)
 	}
 	time.Sleep(time.Second)
 	{
-		opt := Opt{
+		opt := &Opt{
 			Prefix:      "TestLogCounterPlugin_FetchMetrics",
 			patternRegs: patterns,
 			LogFile:     logFileName,
@@ -108,7 +105,7 @@ func TestLogCounterPlugin_FetchMetrics_Uniq(t *testing.T) {
 
 	// initialize parser to create tracking files
 	{
-		opt := Opt{
+		opt := &Opt{
 			Prefix:      "TestLogCounterPlugin_FetchMetrics_Uniq",
 			patternRegs: patterns,
 			LogFile:     logFileName,
@@ -122,17 +119,18 @@ func TestLogCounterPlugin_FetchMetrics_Uniq(t *testing.T) {
 
 	keys := []string{"aaaa", "bbbb", "cccc", "dddd", "eeee"}
 	for _, key := range keys {
-		for i := 0; i < 5; i++ {
-			fh.WriteString(fmt.Sprintf("error: %s something failed\n", key))
+		for range 5 {
+			fmt.Fprintf(fh, "error: %s something failed\n", key)
 		}
 	}
 
-	fh.Sync()
+	err = fh.Sync()
+	require.NoError(t, err, "failed to sync log file")
 
 	// allow followparser to measure a non-zero duration
 	time.Sleep(time.Second)
 
-	opt := Opt{
+	opt := &Opt{
 		Prefix:      "TestLogCounterPlugin_FetchMetrics_Uniq",
 		patternRegs: patterns,
 		LogFile:     logFileName,
@@ -169,7 +167,7 @@ func TestLogCounterPlugin_RotateAndArchive(t *testing.T) {
 
 	// initial run to create tracking files
 	{
-		opt := Opt{
+		opt := &Opt{
 			Prefix:        "TestLogCounterPlugin_RotateAndArchive",
 			patternRegs:   patterns,
 			LogFile:       logFileName,
@@ -185,13 +183,14 @@ func TestLogCounterPlugin_RotateAndArchive(t *testing.T) {
 	beforeSleep := time.Now()
 
 	// write some lines to the original log file, then rotate (move to archive)
-	for i := 0; i < 10; i++ {
-		fh.WriteString(fmt.Sprintf("warning msg %08d\n", i))
+	for i := range 10 {
+		fmt.Fprintf(fh, "warning msg %08d\n", i)
 	}
-	for i := 0; i < 10; i++ {
-		fh.WriteString(fmt.Sprintf("error msg %08d\n", i))
+	for i := range 10 {
+		fmt.Fprintf(fh, "error msg %08d\n", i)
 	}
-	fh.Sync()
+	err = fh.Sync()
+	require.NoError(t, err, "failed to sync log file")
 
 	// rotate: move the file to archive
 	if err := fh.Close(); err != nil {
@@ -207,19 +206,20 @@ func TestLogCounterPlugin_RotateAndArchive(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create new log file: %v", err)
 	}
-	for i := 0; i < 5; i++ {
-		fh2.WriteString(fmt.Sprintf("warning msg %08d\n", i))
+	for i := range 5 {
+		fmt.Fprintf(fh2, "warning msg %08d\n", i)
 	}
-	for i := 0; i < 5; i++ {
-		fh2.WriteString(fmt.Sprintf("error msg %08d\n", i))
+	for i := range 5 {
+		fmt.Fprintf(fh2, "error msg %08d\n", i)
 	}
-	fh2.Sync()
+	err = fh2.Sync()
+	require.NoError(t, err, "failed to sync new log file")
 
 	// beforeSleepから1秒変わるまでsleep
 	time.Sleep(time.Until(beforeSleep.Add(time.Second)))
 
 	{
-		opt := Opt{
+		opt := &Opt{
 			Prefix:        "TestLogCounterPlugin_RotateAndArchive",
 			patternRegs:   patterns,
 			LogFile:       logFileName,
