@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.0.16](https://github.com/monitoring-forge/mackerel-plugin-log-counter/compare/v0.0.15...v0.0.16) - 2026-08-02
+
+- feat: add lint config, PR agent workflow, and code quality improvements by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/44
+- ci: bump the dependencies group with 3 updates by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/43
+- update dependecies by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/46
+
 ## [v0.0.15](https://github.com/monitoring-forge/mackerel-plugin-log-counter/compare/v0.0.14...v0.0.15) - 2026-07-20
 
 - respository transfer, update deps and fix a flaky test by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/41
