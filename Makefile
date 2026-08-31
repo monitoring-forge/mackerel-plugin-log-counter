@@ -1,9 +1,8 @@
 VERSION=0.0.16
-GITCOMMIT?=$(shell git describe --dirty --always)
-LDFLAGS=-ldflags "-w -s -X main.version=${VERSION} -X main.commit=${GITCOMMIT}"
+LDFLAGS=-ldflags "-w -s -X main.version=${VERSION}"
 all: mackerel-plugin-log-counter
 
-.PHONY: mackerel-plugin-linux-process-status
+.PHONY: mackerel-plugin-linux-process-status linux check lint
 
 mackerel-plugin-log-counter: cmd/mackerel-plugin-log-counter/*.go
 	go build $(LDFLAGS) -o mackerel-plugin-log-counter ./...

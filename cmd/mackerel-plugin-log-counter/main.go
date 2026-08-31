@@ -3,25 +3,14 @@ package main
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"regexp"
-	"runtime"
 	"strings"
 
-	"github.com/jessevdk/go-flags"
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	"github.com/monitoring-forge/flagrun"
 )
 
-// version by Makefile
 var version string
-var commit string
-
-const (
-	OK = iota
-	WARNING
-	CRITICAL
-	UNKNOWN
-)
 
 type patternReg struct {
 	reg  *regexp.Regexp
@@ -45,70 +34,47 @@ type Opt struct {
 	ignoreByte    *[]byte
 }
 
-func main() {
-	os.Exit(_main())
-}
-
-func _main() int {
-	opt := &Opt{}
-	psr := flags.NewParser(opt, flags.HelpFlag|flags.PassDoubleDash)
-	_, err := psr.Parse()
-	if opt.Version {
-		if commit == "" {
-			commit = "dev"
-		}
-		fmt.Printf(
-			"%s-%s\n%s/%s, %s, %s\n",
-			filepath.Base(os.Args[0]),
-			version,
-			runtime.GOOS,
-			runtime.GOARCH,
-			runtime.Version(),
-			commit)
-		return OK
-	} else if flags.WroteHelp(err) {
-		fmt.Fprintf(os.Stdout, "%v\n", err)
-		return OK
-	} else if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-		return UNKNOWN
-	}
-
-	if len(opt.KeyNames) == 0 {
+func (o *Opt) Run(_ []string) (string, int) {
+	if len(o.KeyNames) == 0 {
 		fmt.Fprint(os.Stderr, "Specify --pattern and --key-name\n")
-		return UNKNOWN
+		return "", flagrun.UNKNOWN
 	}
-	if len(opt.KeyNames) != len(opt.Patterns) {
+	if len(o.KeyNames) != len(o.Patterns) {
 		fmt.Fprint(os.Stderr, "The number of --pattern and --key-name must be the same\n")
-		return UNKNOWN
+		return "", flagrun.UNKNOWN
 	}
 
 	patterns := make([]*patternReg, 0)
-	for i, k := range opt.KeyNames {
-		p, err := parseKeyName(opt.Patterns[i], k)
+	for i, k := range o.KeyNames {
+		p, err := parseKeyName(o.Patterns[i], k)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
-			return UNKNOWN
+			return "", flagrun.UNKNOWN
 		}
 		patterns = append(patterns, p)
 	}
-	opt.patternRegs = patterns
+	o.patternRegs = patterns
 
-	if opt.Filter != "" {
-		b := []byte(opt.Filter)
-		opt.filterByte = &b
+	if o.Filter != "" {
+		b := []byte(o.Filter)
+		o.filterByte = &b
 	}
-	if opt.Ignore != "" {
-		b := []byte(opt.Ignore)
-		opt.ignoreByte = &b
+	if o.Ignore != "" {
+		b := []byte(o.Ignore)
+		o.ignoreByte = &b
 	}
 
 	u := LogCounterPlugin{
-		opt: opt,
+		opt: o,
 	}
 	plugin := mp.NewMackerelPlugin(u)
 	plugin.Run()
-	return OK
+	return "", flagrun.OK
+
+}
+
+func main() {
+	os.Exit(flagrun.Go(&Opt{}, flagrun.Version(version)))
 }
 
 func parseKeyName(pattern, keyName string) (*patternReg, error) {
