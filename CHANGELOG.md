@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.0.17](https://github.com/monitoring-forge/mackerel-plugin-log-counter/compare/v0.0.16...v0.0.17) - 2026-08-31
+
+- Sync files with `monitoring-forge/github-common` by @monitoring-forge-files-sync-action[bot] in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/47
+- Sync files with `monitoring-forge/github-common` by @monitoring-forge-files-sync-action[bot] in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/49
+- go: bump the dependencies group with 2 updates by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/51
+- ci: bump the-pr-agent/pr-agent from 0.42.0 to 0.43.0 in the dependencies group across 1 directory by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/50
+- chore: Use flagrun , update Makefile and Go modules by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/52
+
 ## [v0.0.16](https://github.com/monitoring-forge/mackerel-plugin-log-counter/compare/v0.0.15...v0.0.16) - 2026-08-02
 
 - feat: add lint config, PR agent workflow, and code quality improvements by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/44
