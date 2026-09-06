@@ -25,13 +25,12 @@ func TestLogCounterPlugin_FetchMetrics(t *testing.T) {
 		{name: "pattern2", reg: regexp.MustCompile(`warning`)},
 	}
 	{
-		opt := &Opt{
+		plugin := LogCounterPlugin{
 			Prefix:      "TestLogCounterPlugin_FetchMetrics",
 			patternRegs: patterns,
 			LogFile:     logFileName,
 			PerSec:      true,
 		}
-		plugin := LogCounterPlugin{opt: opt}
 
 		_, err := plugin.FetchMetrics()
 		assert.NoError(t, err)
@@ -47,13 +46,12 @@ func TestLogCounterPlugin_FetchMetrics(t *testing.T) {
 	time.Sleep(time.Second)
 
 	{
-		opt := &Opt{
+		plugin := LogCounterPlugin{
 			Prefix:      "TestLogCounterPlugin_FetchMetrics",
 			patternRegs: patterns,
 			LogFile:     logFileName,
 			PerSec:      true,
 		}
-		plugin := LogCounterPlugin{opt: opt}
 
 		m, err := plugin.FetchMetrics()
 		assert.NoError(t, err)
@@ -71,13 +69,12 @@ func TestLogCounterPlugin_FetchMetrics(t *testing.T) {
 	}
 	time.Sleep(time.Second)
 	{
-		opt := &Opt{
+		plugin := LogCounterPlugin{
 			Prefix:      "TestLogCounterPlugin_FetchMetrics",
 			patternRegs: patterns,
 			LogFile:     logFileName,
 			PerSec:      false,
 		}
-		plugin := LogCounterPlugin{opt: opt}
 
 		m, err := plugin.FetchMetrics()
 		assert.NoError(t, err)
@@ -105,13 +102,12 @@ func TestLogCounterPlugin_FetchMetrics_Uniq(t *testing.T) {
 
 	// initialize parser to create tracking files
 	{
-		opt := &Opt{
+		plugin := LogCounterPlugin{
 			Prefix:      "TestLogCounterPlugin_FetchMetrics_Uniq",
 			patternRegs: patterns,
 			LogFile:     logFileName,
 			PerSec:      true,
 		}
-		plugin := LogCounterPlugin{opt: opt}
 
 		_, err := plugin.FetchMetrics()
 		assert.NoError(t, err)
@@ -130,13 +126,12 @@ func TestLogCounterPlugin_FetchMetrics_Uniq(t *testing.T) {
 	// allow followparser to measure a non-zero duration
 	time.Sleep(time.Second)
 
-	opt := &Opt{
+	plugin := LogCounterPlugin{
 		Prefix:      "TestLogCounterPlugin_FetchMetrics_Uniq",
 		patternRegs: patterns,
 		LogFile:     logFileName,
 		PerSec:      true,
 	}
-	plugin := LogCounterPlugin{opt: opt}
 
 	m, err := plugin.FetchMetrics()
 	assert.NoError(t, err)
@@ -167,14 +162,13 @@ func TestLogCounterPlugin_RotateAndArchive(t *testing.T) {
 
 	// initial run to create tracking files
 	{
-		opt := &Opt{
+		plugin := LogCounterPlugin{
 			Prefix:        "TestLogCounterPlugin_RotateAndArchive",
 			patternRegs:   patterns,
 			LogFile:       logFileName,
 			LogArchiveDir: archiveDir,
 			PerSec:        true,
 		}
-		plugin := LogCounterPlugin{opt: opt}
 
 		_, err := plugin.FetchMetrics()
 		assert.NoError(t, err)
@@ -219,14 +213,13 @@ func TestLogCounterPlugin_RotateAndArchive(t *testing.T) {
 	time.Sleep(time.Until(beforeSleep.Add(time.Second)))
 
 	{
-		opt := &Opt{
+		plugin := LogCounterPlugin{
 			Prefix:        "TestLogCounterPlugin_RotateAndArchive",
 			patternRegs:   patterns,
 			LogFile:       logFileName,
 			LogArchiveDir: archiveDir,
 			PerSec:        true,
 		}
-		plugin := LogCounterPlugin{opt: opt}
 
 		m, err := plugin.FetchMetrics()
 		assert.NoError(t, err)

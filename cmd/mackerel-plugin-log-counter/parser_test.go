@@ -13,9 +13,6 @@ func TestParser_Parse(t *testing.T) {
 		{name: "pattern1", reg: regexp.MustCompile(`error`)},
 		{name: "pattern2", reg: regexp.MustCompile(`warning`)},
 	}
-	opt := &Opt{
-		patternRegs: patterns,
-	}
 
 	tests := []struct {
 		input    []byte
@@ -36,7 +33,7 @@ func TestParser_Parse(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		parser := NewParser(opt)
+		parser := NewParser(patterns)
 		err := parser.Parse(test.input)
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)
@@ -54,11 +51,6 @@ func TestParser_FilterIgnore(t *testing.T) {
 	ignore := []byte("ignore")
 	patterns := []*patternReg{
 		{name: "pattern1", reg: regexp.MustCompile(`error`)},
-	}
-	opt := &Opt{
-		patternRegs: patterns,
-		filterByte:  &filter,
-		ignoreByte:  &ignore,
 	}
 
 	tests := []struct {
@@ -80,7 +72,7 @@ func TestParser_FilterIgnore(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		parser := NewParser(opt)
+		parser := NewParser(patterns, ParserFilter(&filter), ParserIgnore(&ignore))
 
 		err := parser.Parse(test.input)
 		if err != nil {
@@ -98,11 +90,7 @@ func TestParser_GetResult(t *testing.T) {
 	patterns := []*patternReg{
 		{name: "pattern1", reg: regexp.MustCompile(`error`)},
 	}
-	opt := &Opt{
-		patternRegs: patterns,
-		PerSec:      true,
-	}
-	parser := NewParser(opt)
+	parser := NewParser(patterns, ParserPerSec(true))
 
 	err := parser.Parse([]byte("error occurred"))
 	require.NoError(t, err, "Parse should not return an error")

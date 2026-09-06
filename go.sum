@@ -10,6 +10,8 @@ github.com/mackerelio/golib v1.2.2 h1:fQfW1o2KvPyIsAH/7+M2J0gpf2jLu+NyYpDCN79zxW
 github.com/mackerelio/golib v1.2.2/go.mod h1:itcSOfrsT5XvkzflFPebT43RrliaKDz2T6YGYt3jclw=
 github.com/monitoring-forge/flagrun v0.0.8 h1:CEoMMdFpZ4KOTiBy2mAUQtlgFsTqpvpEoLjzanDgEtw=
 github.com/monitoring-forge/flagrun v0.0.8/go.mod h1:yAwxGIEx81wU4JOMp6hz7SdSYWgT/Hr4JXEdHlEn1mw=
+github.com/monitoring-forge/flagrun v0.0.9 h1:Gir/aGej8eMic8pDrSPtRQF94SRMsVibR2HDXj1qlvo=
+github.com/monitoring-forge/flagrun v0.0.9/go.mod h1:gA9FZuDxNjkwfhcGEN/+fZy0mOPvollW2basn269F1g=
 github.com/monitoring-forge/followparser v0.2.16 h1:8mAozo1/uxHNmaR2PScCpZa+9MpujJtrK/3LyR1q7bk=
 github.com/monitoring-forge/followparser v0.2.16/go.mod h1:3ZKlSyd3PrB9HzCVC7oycfaA9p3t0O2tUEBLCmhfTUc=
 github.com/monitoring-forge/saferio v0.0.3 h1:1i3va3QQ9QPunwsgekDzC8RV91KT1Xcb++Z0Dnl9zFY=
