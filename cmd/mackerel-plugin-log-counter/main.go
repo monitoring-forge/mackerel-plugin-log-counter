@@ -34,22 +34,19 @@ type Opt struct {
 	ignoreByte    *[]byte
 }
 
-func (o *Opt) Run(_ []string) (string, int) {
+func (o *Opt) Validate(_ []string) error {
 	if len(o.KeyNames) == 0 {
-		fmt.Fprint(os.Stderr, "Specify --pattern and --key-name\n")
-		return "", flagrun.UNKNOWN
+		return fmt.Errorf("specify --pattern and --key-name")
 	}
 	if len(o.KeyNames) != len(o.Patterns) {
-		fmt.Fprint(os.Stderr, "The number of --pattern and --key-name must be the same\n")
-		return "", flagrun.UNKNOWN
+		return fmt.Errorf("the number of --pattern and --key-name must be the same")
 	}
 
 	patterns := make([]*patternReg, 0)
 	for i, k := range o.KeyNames {
 		p, err := parseKeyName(o.Patterns[i], k)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "%v\n", err)
-			return "", flagrun.UNKNOWN
+			return err
 		}
 		patterns = append(patterns, p)
 	}
@@ -63,18 +60,27 @@ func (o *Opt) Run(_ []string) (string, int) {
 		b := []byte(o.Ignore)
 		o.ignoreByte = &b
 	}
+	return nil
+}
 
+func (o *Opt) Run(_ []string) {
 	u := LogCounterPlugin{
-		opt: o,
+		Prefix:        o.Prefix,
+		LogFile:       o.LogFile,
+		LogArchiveDir: o.LogArchiveDir,
+		PerSec:        o.PerSec,
+		Verbose:       o.Verbose,
+		patternRegs:   o.patternRegs,
+		filterByte:    o.filterByte,
+		ignoreByte:    o.ignoreByte,
 	}
 	plugin := mp.NewMackerelPlugin(u)
 	plugin.Run()
-	return "", flagrun.OK
-
 }
 
 func main() {
-	os.Exit(flagrun.Go(&Opt{}, flagrun.Version(version)))
+	ops := &Opt{}
+	os.Exit(flagrun.Ship(ops, flagrun.Version(version), flagrun.Validator(ops.Validate)))
 }
 
 func parseKeyName(pattern, keyName string) (*patternReg, error) {

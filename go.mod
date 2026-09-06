@@ -18,7 +18,7 @@ require (
 
 require (
 	github.com/avast/retry-go/v4 v4.7.0 // indirect
-	github.com/monitoring-forge/flagrun v0.0.8
+	github.com/monitoring-forge/flagrun v0.0.9
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.41.0 // indirect
 )

@@ -4,37 +4,64 @@ import (
 	"bytes"
 )
 
+type ParserOption func(*Parser)
+
 type Parser struct {
-	opt         *Opt
+	PerSec      bool
+	patternRegs []*patternReg
+	filterByte  *[]byte
+	ignoreByte  *[]byte
 	mapCounter  map[string]float64
 	uniqCounter map[string]map[string]struct{}
 	duration    float64
 }
 
-func NewParser(opt *Opt) *Parser {
+func NewParser(patternRegs []*patternReg, opts ...ParserOption) *Parser {
 	m := map[string]float64{}
 	uq := map[string]map[string]struct{}{}
-	for _, pr := range opt.patternRegs {
+	for _, pr := range patternRegs {
 		m[pr.name] = float64(0)
 		if pr.uniq {
 			uq[pr.name] = map[string]struct{}{}
 		}
 	}
-	return &Parser{
-		opt:         opt,
+	p := &Parser{
+		patternRegs: patternRegs,
 		mapCounter:  m,
 		uniqCounter: uq,
+	}
+	for _, opt := range opts {
+		opt(p)
+	}
+	return p
+}
+
+func ParserPerSec(perSec bool) ParserOption {
+	return func(p *Parser) {
+		p.PerSec = perSec
+	}
+}
+
+func ParserFilter(filter *[]byte) ParserOption {
+	return func(p *Parser) {
+		p.filterByte = filter
+	}
+}
+
+func ParserIgnore(ignore *[]byte) ParserOption {
+	return func(p *Parser) {
+		p.ignoreByte = ignore
 	}
 }
 
 func (p *Parser) Parse(b []byte) error {
-	if p.opt.filterByte != nil && !bytes.Contains(b, *p.opt.filterByte) {
+	if p.filterByte != nil && !bytes.Contains(b, *p.filterByte) {
 		return nil
 	}
-	if p.opt.ignoreByte != nil && bytes.Contains(b, *p.opt.ignoreByte) {
+	if p.ignoreByte != nil && bytes.Contains(b, *p.ignoreByte) {
 		return nil
 	}
-	for _, pr := range p.opt.patternRegs {
+	for _, pr := range p.patternRegs {
 		if pr.uniq {
 			f := pr.reg.Find(b)
 			if len(f) > 0 {
@@ -59,13 +86,13 @@ func (p *Parser) GetResult() map[string]float64 {
 		// first running
 		return m
 	}
-	for _, pr := range p.opt.patternRegs {
+	for _, pr := range p.patternRegs {
 		if pr.uniq {
 			m[pr.name] = float64(len(p.uniqCounter[pr.name]))
 		} else {
 			m[pr.name] = p.mapCounter[pr.name]
 		}
-		if p.opt.PerSec {
+		if p.PerSec {
 			m[pr.name] = m[pr.name] / p.duration
 		} else {
 			m[pr.name] = (m[pr.name] / p.duration) * 60
