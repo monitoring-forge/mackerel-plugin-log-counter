@@ -3,20 +3,12 @@ package main
 import (
 	"fmt"
 	"os"
-	"regexp"
-	"strings"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
 	"github.com/monitoring-forge/flagrun"
 )
 
 var version string
-
-type patternReg struct {
-	reg  *regexp.Regexp
-	name string
-	uniq bool
-}
 
 type Opt struct {
 	Version       bool     `short:"v" long:"version" description:"Show version"`
@@ -64,45 +56,11 @@ func (o *Opt) Validate(_ []string) error {
 }
 
 func (o *Opt) Run(_ []string) {
-	u := LogCounterPlugin{
-		Prefix:        o.Prefix,
-		LogFile:       o.LogFile,
-		LogArchiveDir: o.LogArchiveDir,
-		PerSec:        o.PerSec,
-		Verbose:       o.Verbose,
-		patternRegs:   o.patternRegs,
-		filterByte:    o.filterByte,
-		ignoreByte:    o.ignoreByte,
-	}
-	plugin := mp.NewMackerelPlugin(u)
+	plugin := mp.NewMackerelPlugin(o)
 	plugin.Run()
 }
 
 func main() {
 	ops := &Opt{}
 	os.Exit(flagrun.Ship(ops, flagrun.Version(version), flagrun.Validator(ops.Validate)))
-}
-
-func parseKeyName(pattern, keyName string) (*patternReg, error) {
-	reg, err := regexp.Compile(pattern)
-	if err != nil {
-		return nil, fmt.Errorf("pattern '%s' compile error. %w", pattern, err)
-	}
-
-	uniq := false
-
-	fields := strings.FieldsFunc(keyName, func(r rune) bool {
-		return r == '|'
-	})
-	if len(fields) == 2 && fields[1] == "uniq" {
-		uniq = true
-	} else if len(fields) >= 2 {
-		return nil, fmt.Errorf("key name '%s' format error. must be <name> or <name>|uniq", keyName)
-	}
-
-	return &patternReg{
-		reg:  reg,
-		name: fields[0],
-		uniq: uniq,
-	}, nil
 }

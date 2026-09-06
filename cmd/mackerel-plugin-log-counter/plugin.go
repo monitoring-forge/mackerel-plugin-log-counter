@@ -9,20 +9,9 @@ import (
 	"github.com/monitoring-forge/followparser"
 )
 
-type LogCounterPlugin struct {
-	Prefix        string
-	LogFile       string
-	LogArchiveDir string
-	PerSec        bool
-	Verbose       bool
-	patternRegs   []*patternReg
-	filterByte    *[]byte
-	ignoreByte    *[]byte
-}
-
-func (u LogCounterPlugin) GraphDefinition() map[string]mp.Graphs {
-	metrics := make([]mp.Metrics, 0, len(u.patternRegs))
-	for _, pr := range u.patternRegs {
+func (opt *Opt) GraphDefinition() map[string]mp.Graphs {
+	metrics := make([]mp.Metrics, 0, len(opt.patternRegs))
+	for _, pr := range opt.patternRegs {
 		metrics = append(metrics, mp.Metrics{
 			Name:    pr.name,
 			Label:   pr.name,
@@ -31,36 +20,36 @@ func (u LogCounterPlugin) GraphDefinition() map[string]mp.Graphs {
 		})
 	}
 	comment := "(per minute)"
-	if u.PerSec {
+	if opt.PerSec {
 		comment = "(per second)"
 	}
 	return map[string]mp.Graphs{
 		"": {
-			Label:   fmt.Sprintf("LogCounter %s %s", u.Prefix, comment),
+			Label:   fmt.Sprintf("LogCounter %s %s", opt.Prefix, comment),
 			Unit:    mp.UnitFloat,
 			Metrics: metrics,
 		},
 	}
 }
 
-func (u LogCounterPlugin) FetchMetrics() (map[string]float64, error) {
+func (opt *Opt) FetchMetrics() (map[string]float64, error) {
 	p := NewParser(
-		u.patternRegs,
-		ParserPerSec(u.PerSec),
-		ParserFilter(u.filterByte),
-		ParserIgnore(u.ignoreByte),
+		opt.patternRegs,
+		ParserPerSec(opt.PerSec),
+		ParserFilter(opt.filterByte),
+		ParserIgnore(opt.ignoreByte),
 	)
 	fp := &followparser.Parser{
 		WorkDir:  pluginutil.PluginWorkDir(),
 		Callback: p,
-		Silent:   !u.Verbose,
+		Silent:   !opt.Verbose,
 	}
-	if u.LogArchiveDir != "" {
-		fp.ArchiveDir = u.LogArchiveDir
+	if opt.LogArchiveDir != "" {
+		fp.ArchiveDir = opt.LogArchiveDir
 	}
 	_, err := fp.Parse(
-		fmt.Sprintf("%s-mp-log-counter-%s", u.Prefix, url.PathEscape(u.LogFile)),
-		u.LogFile,
+		fmt.Sprintf("%s-mp-log-counter-%s", opt.Prefix, url.PathEscape(opt.LogFile)),
+		opt.LogFile,
 	)
 	if err != nil {
 		return nil, err
@@ -68,6 +57,6 @@ func (u LogCounterPlugin) FetchMetrics() (map[string]float64, error) {
 	return p.GetResult(), nil
 }
 
-func (u LogCounterPlugin) MetricKeyPrefix() string {
-	return u.Prefix
+func (opt *Opt) MetricKeyPrefix() string {
+	return opt.Prefix
 }
