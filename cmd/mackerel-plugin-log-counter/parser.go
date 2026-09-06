@@ -2,9 +2,18 @@ package main
 
 import (
 	"bytes"
+	"fmt"
+	"regexp"
+	"strings"
 )
 
 type ParserOption func(*Parser)
+
+type patternReg struct {
+	reg  *regexp.Regexp
+	name string
+	uniq bool
+}
 
 type Parser struct {
 	PerSec      bool
@@ -14,6 +23,30 @@ type Parser struct {
 	mapCounter  map[string]float64
 	uniqCounter map[string]map[string]struct{}
 	duration    float64
+}
+
+func parseKeyName(pattern, keyName string) (*patternReg, error) {
+	reg, err := regexp.Compile(pattern)
+	if err != nil {
+		return nil, fmt.Errorf("pattern '%s' compile error. %w", pattern, err)
+	}
+
+	uniq := false
+
+	fields := strings.FieldsFunc(keyName, func(r rune) bool {
+		return r == '|'
+	})
+	if len(fields) == 2 && fields[1] == "uniq" {
+		uniq = true
+	} else if len(fields) >= 2 {
+		return nil, fmt.Errorf("key name '%s' format error. must be <name> or <name>|uniq", keyName)
+	}
+
+	return &patternReg{
+		reg:  reg,
+		name: fields[0],
+		uniq: uniq,
+	}, nil
 }
 
 func NewParser(patternRegs []*patternReg, opts ...ParserOption) *Parser {
