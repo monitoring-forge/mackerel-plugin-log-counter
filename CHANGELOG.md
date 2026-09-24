@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.0.18](https://github.com/monitoring-forge/mackerel-plugin-log-counter/compare/v0.0.17...v0.0.18) - 2026-09-24
+
+- feat: implement validation for options and refactor LogCounterPlugin … by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/54
+- Sync files with `monitoring-forge/github-common` by @monitoring-forge-files-sync-action[bot] in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/53
+- refactor: simplify LogCounterPlugin structure and improve option hand… by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/57
+- ci: bump Songmu/tagpr from 1.20.1 to 1.20.2 in the dependencies group by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/56
+- go: bump the dependencies group across 1 directory with 3 updates by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/60
+- ci: bump Songmu/tagpr from 1.20.2 to 1.20.3 in the dependencies group by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/58
+
 ## [v0.0.17](https://github.com/monitoring-forge/mackerel-plugin-log-counter/compare/v0.0.16...v0.0.17) - 2026-08-31
 
 - Sync files with `monitoring-forge/github-common` by @monitoring-forge-files-sync-action[bot] in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/47
