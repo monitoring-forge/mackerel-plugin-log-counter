@@ -10,15 +10,16 @@ require (
 )
 
 require (
+	github.com/dustin/go-humanize v1.1.0 // indirect
 	github.com/jessevdk/go-flags v1.6.1 // indirect
 	github.com/mackerelio/checkers v0.2.1 // indirect
-	github.com/monitoring-forge/saferio v0.0.3 // indirect
+	github.com/monitoring-forge/saferio v0.0.4 // indirect
 	go.yaml.in/yaml/v3 v3.0.6 // indirect
 )
 
 require (
 	github.com/avast/retry-go/v4 v4.7.0 // indirect
-	github.com/monitoring-forge/flagrun v0.0.10
+	github.com/monitoring-forge/flagrun v0.0.11
 	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
 )
