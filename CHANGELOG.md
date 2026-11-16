@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.0.19](https://github.com/monitoring-forge/mackerel-plugin-log-counter/compare/v0.0.18...v0.0.19) - 2026-11-16
+
+- ci: bump Songmu/tagpr from 1.21.4 to 1.22.0 in the tagpr group by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/73
+
 ## [v0.0.18](https://github.com/monitoring-forge/mackerel-plugin-log-counter/compare/v0.0.17...v0.0.18) - 2026-11-04
 
 - feat: implement validation for options and refactor LogCounterPlugin … by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-log-counter/pull/54
